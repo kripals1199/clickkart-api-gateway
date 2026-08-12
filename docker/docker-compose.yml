@@ -1,0 +1,57 @@
+# docker/docker-compose.yml
+services:
+  api-gateway:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    image: clickkart/api-gateway:1.0.0
+    container_name: clickkart-api-gateway
+    ports:
+      - "${SERVER_PORT:-8080}:${SERVER_PORT:-8080}"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      SERVER_PORT: ${SERVER_PORT:-8080}
+      CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST:-config-server}
+      CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT:-8888}
+      CONFIG_SERVER_USERNAME: ${CONFIG_SERVER_USERNAME:-admin}
+      CONFIG_SERVER_PASSWORD: ${CONFIG_SERVER_PASSWORD:-dev-only-secret-change-me}
+      GATEWAY_HOSTNAME: ${GATEWAY_HOSTNAME:-localhost}
+      GATEWAY_ADMIN_USERNAME: ${GATEWAY_ADMIN_USERNAME:-admin}
+      GATEWAY_ADMIN_PASSWORD: ${GATEWAY_ADMIN_PASSWORD:-dev-only-secret-change-me}
+      EUREKA_SERVER_HOST: ${EUREKA_SERVER_HOST:-eureka-server}
+      EUREKA_SERVER_PORT: ${EUREKA_SERVER_PORT:-8761}
+      EUREKA_DASHBOARD_USERNAME: ${EUREKA_DASHBOARD_USERNAME:-admin}
+      EUREKA_DASHBOARD_PASSWORD: ${EUREKA_DASHBOARD_PASSWORD:-dev-only-secret-change-me}
+      JWT_SECRET: ${JWT_SECRET:-dev-only-secret-change-me-please-32bytes-minimum}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:4200}
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    networks:
+      - clickkart-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: clickkart-gateway-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - clickkart-net
+
+networks:
+  clickkart-net:
+    external: true
+    name: clickkart-net

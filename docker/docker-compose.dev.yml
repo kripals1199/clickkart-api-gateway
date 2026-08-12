@@ -1,0 +1,20 @@
+# docker/docker-compose.dev.yml
+services:
+  api-gateway:
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      CONFIG_SERVER_HOST: clickkart-config-server
+      CONFIG_SERVER_USERNAME: admin
+      CONFIG_SERVER_PASSWORD: dev-only-secret-change-me
+      # container's DNS-resolvable name, not localhost - same reasoning as
+      # clickkart-auth-service's AUTH_SERVICE_HOSTNAME: whatever any future service
+      # discovers this Gateway by via Eureka must resolve on the shared network
+      GATEWAY_HOSTNAME: clickkart-api-gateway
+      GATEWAY_ADMIN_USERNAME: admin
+      GATEWAY_ADMIN_PASSWORD: dev-only-secret-change-me
+      EUREKA_SERVER_HOST: clickkart-eureka-server
+      EUREKA_DASHBOARD_USERNAME: admin
+      EUREKA_DASHBOARD_PASSWORD: dev-only-secret-change-me
+      JWT_SECRET: dev-only-secret-change-me-please-32bytes-minimum
+      REDIS_HOST: clickkart-gateway-redis
+      ALLOWED_ORIGINS: http://localhost:4200

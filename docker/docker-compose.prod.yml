@@ -1,0 +1,20 @@
+# docker/docker-compose.prod.yml
+services:
+  api-gateway:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST:?CONFIG_SERVER_HOST must be set for prod}
+      CONFIG_SERVER_USERNAME: ${CONFIG_SERVER_USERNAME:?CONFIG_SERVER_USERNAME must be set for prod}
+      CONFIG_SERVER_PASSWORD: ${CONFIG_SERVER_PASSWORD:?CONFIG_SERVER_PASSWORD must be set for prod}
+      GATEWAY_HOSTNAME: ${GATEWAY_HOSTNAME:?GATEWAY_HOSTNAME must be set for prod}
+      GATEWAY_ADMIN_USERNAME: ${GATEWAY_ADMIN_USERNAME:?GATEWAY_ADMIN_USERNAME must be set for prod}
+      GATEWAY_ADMIN_PASSWORD: ${GATEWAY_ADMIN_PASSWORD:?GATEWAY_ADMIN_PASSWORD must be set for prod}
+      EUREKA_SERVER_HOST: ${EUREKA_SERVER_HOST:?EUREKA_SERVER_HOST must be set for prod}
+      EUREKA_DASHBOARD_USERNAME: ${EUREKA_DASHBOARD_USERNAME:?EUREKA_DASHBOARD_USERNAME must be set for prod}
+      EUREKA_DASHBOARD_PASSWORD: ${EUREKA_DASHBOARD_PASSWORD:?EUREKA_DASHBOARD_PASSWORD must be set for prod}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set for prod}
+      REDIS_HOST: ${REDIS_HOST:?REDIS_HOST must be set for prod}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD must be set for prod}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:?ALLOWED_ORIGINS must be set for prod}
+    # secrets should be sourced from a real secrets manager (K8s Secret / Vault) at
+    # deploy time, never from a .env file committed to source control
