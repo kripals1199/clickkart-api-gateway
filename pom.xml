@@ -114,6 +114,35 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- CVE-2026-59901, -55831, -56819, -56816 (all HIGH): Netty 4.2.15.Final ships
+                 vulnerable netty-codec-compression/-http/-http2/-http3, one of which is an
+                 infinite-loop DoS. This is the only service pulling Netty's codec stack (it is
+                 the only reactive/WebFlux app) and also the only internet-facing one, so these
+                 matter more here than the count alone suggests.
+
+                 Imported as a BOM rather than pinning the four artifacts individually, so every
+                 Netty module moves together and no mismatched pair can be resolved. Declared
+                 FIRST because among imported BOMs Maven takes the first declaration that
+                 manages a given artifact. Remove once Spring Boot's own BOM ships >= 4.2.16. -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>4.2.16.Final</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- CVE-2026-54399 (HIGH): httpcore5 5.3.6 arrives transitively via Spring Cloud.
+                 Pinned to the first fixed release. An explicit entry here deliberately takes
+                 precedence over the imported BOMs below - remove this pin once the Spring Cloud
+                 BOM ships 5.4.3 or later on its own. Verified by Trivy image scan. -->
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>5.4.3</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
